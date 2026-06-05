@@ -2,9 +2,13 @@ const { Resend } = require("resend");
 
 const FROM = process.env.EMAIL_FROM || "QREventix <onboarding@resend.dev>";
 
+let _client;
 function getClient() {
-  if (!process.env.RESEND_API_KEY) throw new Error("RESEND_API_KEY env var is not set");
-  return new Resend(process.env.RESEND_API_KEY);
+  if (!_client) {
+    if (!process.env.RESEND_API_KEY) throw new Error("RESEND_API_KEY env var is not set");
+    _client = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _client;
 }
 
 async function send(to, subject, html) {

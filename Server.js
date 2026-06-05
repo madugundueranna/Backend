@@ -38,7 +38,9 @@ app.use(session({
     ttl: 14 * 24 * 60 * 60,
   }),
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   },
 }));
 app.use(passport.initialize());
