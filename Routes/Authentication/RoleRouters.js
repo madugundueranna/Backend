@@ -29,13 +29,30 @@ roleRouters.get(
 // Google OAuth Callback
 roleRouters.get(
     "/auth/google/callback",
-    passport.authenticate("google", {
-        failureRedirect: `${process.env.WEB_URL}/login`,
-    }),
+    (req, res, next) => {
+        console.log("[GoogleCallback] Hit callback route");
+        passport.authenticate("google", {
+            failureRedirect: `${process.env.WEB_URL}/login`,
+            failureMessage: true,
+        })(req, res, (err) => {
+            if (err) {
+                console.error("[GoogleCallback] passport.authenticate error:", err.message);
+                return next(err);
+            }
+            console.log("[GoogleCallback] Authenticated, req.user:", req.user ? req.user.email : "null");
+            next();
+        });
+    },
     (req, res) => {
+        if (!req.user) {
+            console.error("[GoogleCallback] req.user is null after auth — redirecting to login");
+            return res.redirect(`${process.env.WEB_URL}/login`);
+        }
+
         const user = req.user;
         const rawToken = user.token.startsWith("Bearer ") ? user.token.slice(7) : user.token;
 
+        console.log("[GoogleCallback] Setting cookie, NODE_ENV:", process.env.NODE_ENV);
         res.cookie("token", rawToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -43,6 +60,7 @@ roleRouters.get(
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
+        console.log("[GoogleCallback] Redirecting to:", `${process.env.WEB_URL}/auth/success`);
         res.redirect(`${process.env.WEB_URL}/auth/success`);
     }
 );
