@@ -1,7 +1,7 @@
 const express = require("express");
 const rateLimit = require("express-rate-limit");
 const otpRouters = new express.Router();
-const otpController = require("../../Controllers/OTP/OtpController");
+const otpController = require("../../Controllers/OTP/OTPController");
 
 const otpSendLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
