@@ -1,10 +1,14 @@
 const { Resend } = require("resend");
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = process.env.EMAIL_FROM || "QREventix <onboarding@resend.dev>";
 
+function getClient() {
+  if (!process.env.RESEND_API_KEY) throw new Error("RESEND_API_KEY env var is not set");
+  return new Resend(process.env.RESEND_API_KEY);
+}
+
 async function send(to, subject, html) {
-  const { error } = await resend.emails.send({ from: FROM, to, subject, html });
+  const { error } = await getClient().emails.send({ from: FROM, to, subject, html });
   if (error) throw new Error(error.message || JSON.stringify(error));
 }
 
