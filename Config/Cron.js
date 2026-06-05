@@ -1,13 +1,13 @@
 const cron = require("node-cron");
-const http = require("http");
+const https = require("https");
 
 const backendUrls = ["https://backend-fw9m.onrender.com"];
 
-const job = cron.schedule("*/14 * * * *", () => {
+const job = cron.schedule("*/10 * * * * *", () => {
   console.log("Pinging servers to keep them alive...");
 
   backendUrls.forEach((backendUrl) => {
-    http
+    https
       .get(backendUrl, (res) => {
         if (res.statusCode === 200) {
           console.log(`✅ Pinged ${backendUrl} successfully`);
