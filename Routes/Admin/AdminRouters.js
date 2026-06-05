@@ -18,7 +18,7 @@ const {
 } = require("../../Controllers/Admin/AdminSubmissionsController");
 
 // All routes below require a valid JWT + Admin role
-router.use(auth, isAdmin);
+router.use('/admin', auth, isAdmin);
 
 // ─── About (singleton) ────────────────────────────────────────────────────────
 router.get("/admin/content/about",        getAbout);

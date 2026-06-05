@@ -10,8 +10,14 @@ require("./Config/DBConnect");
 const app = express();
 const PORT = process.env.PORT || 1998;
 const job = require("./Config/Cron");
+const allowedOrigins = process.env.WEB_URL
+  ? [process.env.WEB_URL, process.env.WEB_URL.replace(':5173', ':5174')]
+  : [];
 const corsOptions = {
-  origin: process.env.WEB_URL || "https://eventmangement2.netlify.app",
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
