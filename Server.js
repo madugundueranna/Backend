@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 1998;
 const job = require("./Config/Cron");
 const corsOptions = {
-  origin: process.env.WEB_URL || "https://eventmangement2.netlify.app/",
+  origin: process.env.WEB_URL || "https://eventmangement2.netlify.app",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
