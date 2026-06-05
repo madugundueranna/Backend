@@ -12,6 +12,9 @@ const transporter = isDummyConfig
       port: 587,
       secure: false,
       family: 4,
+      connectionTimeout: 10000,
+      greetingTimeout: 5000,
+      socketTimeout: 10000,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
