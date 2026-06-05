@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-require("./Queue/emailWorker"); // start BullMQ email worker
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const router = require("./Routes/Routers");

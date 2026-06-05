@@ -16,7 +16,7 @@ const {
 const STATUS = require("../../Common/StatusCodes");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const { dispatchEmail } = require("../../Queue/emailQueue");
+const EmailService = require("../../Common/EmailService");
 
 // ─── Login ────────────────────────────────────────────────────────────────────
 exports.login = async (req, res) => {
@@ -279,7 +279,7 @@ exports.forgotPassword = async (req, res) => {
     await user.save({ validateBeforeSave: false });
 
     const resetUrl = `${process.env.WEB_URL}/reset-password/${rawToken}`;
-    await dispatchEmail("password-reset-link", { email: user.email, name: user.name, url: resetUrl });
+    await EmailService.sendPasswordResetEmail(user.email, user.name, resetUrl);
 
     return sendSuccessResponse(res, STATUS.OK, RESPONSE_MESSAGES.REST_PASSWORD_SUCCESS, null, "data");
   } catch (error) {
@@ -319,7 +319,7 @@ exports.resetPassword = async (req, res) => {
     user.tokenVersion += 1; // invalidate all existing sessions
     await user.save();
 
-    await dispatchEmail("password-reset-confirm", { email: user.email, name: user.name });
+    await EmailService.sendPasswordResetConfirm(user.email, user.name);
 
     return sendSuccessResponse(res, STATUS.OK, RESPONSE_MESSAGES.RESET_PASSWORD_SUCCESS, null, "data");
   } catch (error) {
@@ -368,7 +368,7 @@ exports.resetPasswordOtp = async (req, res) => {
     // Consume the OTP
     await OtpModel.deleteOne({ _id: otpRecord._id });
 
-    await dispatchEmail("password-reset-confirm", { email: user.email, name: user.name });
+    await EmailService.sendPasswordResetConfirm(user.email, user.name);
 
     return sendSuccessResponse(res, STATUS.OK, "Password reset successfully.", null, "data");
   } catch (error) {

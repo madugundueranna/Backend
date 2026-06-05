@@ -1,7 +1,7 @@
 const moment = require("moment-timezone");
 const OtpModel = require("../../Models/OTP/OtpModel");
 const roleModel = require("../../Models/Authentication/RoleModel");
-const { dispatchEmail } = require("../../Queue/emailQueue");
+const EmailService = require("../../Common/EmailService");
 const { sendErrorResponse, sendSuccessResponse } = require("../../Common/Responses");
 const STATUS = require("../../Common/StatusCodes");
 
@@ -95,7 +95,7 @@ exports.sendOtp = async (req, res) => {
       createdDate: moment.tz("Asia/Kolkata").format("YYYY-MM-DD HH:mm:ss"),
     });
 
-    await dispatchEmail("otp", { email: normalizedEmail, code, type });
+    await EmailService.sendOtpEmail(normalizedEmail, code, type);
 
     return sendSuccessResponse(res, STATUS.OK, "OTP sent successfully. Check your inbox.", null, "data");
   } catch (err) {

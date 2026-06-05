@@ -3,7 +3,8 @@ const ReportIssue = require("../../Models/ReportIssue/ReportIssueModel");
 const { sendSuccessResponse, sendErrorResponse, sendCreateSuccessResponse } = require("../../Common/Responses");
 const STATUS = require("../../Common/StatusCodes");
 const { uploadToCloudinary } = require("../../Config/FileUpload");
-const { dispatchEmail } = require("../../Queue/emailQueue");
+const EmailService = require("../../Common/EmailService");
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
 
 // ─── Submit Contact Enquiry ────────────────────────────────────────────────────
 exports.submitEnquiry = async (req, res) => {
@@ -16,8 +17,8 @@ exports.submitEnquiry = async (req, res) => {
 
     const enquiry = await Enquiry.create({ name, email, message });
 
-    dispatchEmail("contact-admin", { name, email, message, createdAt: enquiry.createdAt });
-    dispatchEmail("contact-user", { email, name });
+    EmailService.sendContactNotification(ADMIN_EMAIL, { name, email, message, createdAt: enquiry.createdAt });
+    EmailService.sendContactConfirmation(email, name);
 
     return sendCreateSuccessResponse(
       res,
@@ -57,7 +58,7 @@ exports.submitReportIssue = async (req, res) => {
       screenshot: screenshotData,
     });
 
-    dispatchEmail("report-issue", { issueType, description, createdAt: report.createdAt });
+    EmailService.sendReportIssueNotification(ADMIN_EMAIL, { issueType, description, createdAt: report.createdAt });
 
     return sendCreateSuccessResponse(
       res,
