@@ -39,7 +39,7 @@ passport.use(
             name: profile.displayName || "Google User",
             email: email,
             password: "",
-            role: "User",
+            role: "Attendee",
             authProvider: "google",
             createdDate: currentISTDateString,
             updatedDate: currentISTDateString,
