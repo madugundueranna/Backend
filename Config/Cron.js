@@ -1,7 +1,7 @@
 const cron = require("node-cron");
 const http = require("http");
 
-const backendUrls = ["http://localhost:1998"];
+const backendUrls = ["https://backend-fw9m.onrender.com"];
 
 const job = cron.schedule("*/14 * * * *", () => {
   console.log("Pinging servers to keep them alive...");
