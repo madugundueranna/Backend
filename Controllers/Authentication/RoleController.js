@@ -102,25 +102,6 @@ exports.register = async (req, res) => {
       );
     }
 
-    // Ensure email was verified via OTP before allowing registration
-    const otpRecord = await OtpModel.findOne({
-      email: email.toLowerCase(),
-      type: "email-verify",
-      verified: true,
-      expiresAt: { $gt: new Date() },
-    });
-
-    if (!otpRecord) {
-      return sendErrorResponse(
-        res,
-        STATUS.UNPROCESSABLE_ENTITY,
-        "Please verify your email with OTP before registering."
-      );
-    }
-
-    // Consume the OTP so it cannot be reused
-    await OtpModel.deleteOne({ _id: otpRecord._id });
-
     // Password hashing & timestamps are handled by pre-save hooks in RoleModel
     const newUser = new roleModel({
       name,
