@@ -1,6 +1,6 @@
 const { Resend } = require("resend");
 
-const FROM = process.env.EMAIL_FROM || "QREventix <onboarding@resend.dev>";
+const FROM = process.env.EMAIL_FROM;
 
 let _client;
 function getClient() {
