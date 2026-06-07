@@ -249,14 +249,14 @@ exports.forgotPassword = async (req, res) => {
       return sendSuccessResponse(res, STATUS.OK, RESPONSE_MESSAGES.REST_PASSWORD_SUCCESS, null, "data");
     }
 
-    if (user.authProvider === "google") {
-      console.log(`[ForgotPassword] email=${normalizedEmail} is a Google account — reset blocked`);
-      return sendErrorResponse(
-        res,
-        STATUS.BAD_REQUEST,
-        "This account uses Google Sign-In. Please log in with Google."
-      );
-    }
+    // if (user.authProvider === "google") {
+    //   console.log(`[ForgotPassword] email=${normalizedEmail} is a Google account — reset blocked`);
+    //   return sendErrorResponse(
+    //     res,
+    //     STATUS.BAD_REQUEST,
+    //     "This account uses Google Sign-In. Please log in with Google."
+    //   );
+    // }
 
     const rawToken = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
