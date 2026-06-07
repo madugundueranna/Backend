@@ -232,19 +232,25 @@ exports.logout = async (req, res) => {
 // ─── Forgot Password ──────────────────────────────────────────────────────────
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
+  console.log(`[ForgotPassword] Request received -> email=${email}`);
   if (!email) {
+    console.warn("[ForgotPassword] Missing email in request body");
     return sendErrorResponse(res, STATUS.UNPROCESSABLE_ENTITY, "Email is required.");
   }
 
+  const normalizedEmail = email.toLowerCase();
+
   try {
-    const user = await roleModel.findOne({ email: email.toLowerCase() });
+    const user = await roleModel.findOne({ email: normalizedEmail });
 
     // Always return success to prevent email enumeration
     if (!user) {
+      console.log(`[ForgotPassword] No account for email=${normalizedEmail} — returning generic success (no email sent)`);
       return sendSuccessResponse(res, STATUS.OK, RESPONSE_MESSAGES.REST_PASSWORD_SUCCESS, null, "data");
     }
 
     if (user.authProvider === "google") {
+      console.log(`[ForgotPassword] email=${normalizedEmail} is a Google account — reset blocked`);
       return sendErrorResponse(
         res,
         STATUS.BAD_REQUEST,
@@ -260,11 +266,13 @@ exports.forgotPassword = async (req, res) => {
     await user.save({ validateBeforeSave: false });
 
     const resetUrl = `${process.env.WEB_URL}/reset-password/${rawToken}`;
+    console.log(`[ForgotPassword] User found (name=${user.name}); token saved (expires 1h). WEB_URL=${process.env.WEB_URL} — dispatching reset email...`);
     await EmailService.sendPasswordResetEmail(user.email, user.name, resetUrl);
+    console.log(`[ForgotPassword] Reset email dispatched successfully -> email=${normalizedEmail}`);
 
     return sendSuccessResponse(res, STATUS.OK, RESPONSE_MESSAGES.REST_PASSWORD_SUCCESS, null, "data");
   } catch (error) {
-    console.error("Forgot Password Error:", error);
+    console.error(`[ForgotPassword] ERROR -> email=${normalizedEmail}:`, error?.message || error);
     return sendErrorResponse(res, STATUS.INTERNAL_SERVER_ERROR, ERROR_MESSAGES.REST_PASSWORD_FAILED);
   }
 };

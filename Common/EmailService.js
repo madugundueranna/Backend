@@ -12,8 +12,14 @@ function getClient() {
 }
 
 async function send(to, subject, html) {
-  const { error } = await getClient().emails.send({ from: FROM, to, subject, html });
-  if (error) throw new Error(error.message || JSON.stringify(error));
+  console.log(`[EmailService] Sending email -> to=${to} from="${FROM}" subject="${subject}"`);
+  const { data, error } = await getClient().emails.send({ from: FROM, to, subject, html });
+  if (error) {
+    console.error(`[EmailService] Resend FAILED -> to=${to} from="${FROM}":`, JSON.stringify(error));
+    throw new Error(error.message || JSON.stringify(error));
+  }
+  console.log(`[EmailService] Resend OK -> to=${to} id=${data?.id}`);
+  return data;
 }
 
 // ─── OTP Email ────────────────────────────────────────────────────────────────
