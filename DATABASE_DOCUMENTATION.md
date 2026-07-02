@@ -124,7 +124,7 @@ A fallback value MySQL inserts automatically if you don't supply one.
 
 ### Logical grouping of tables
 
-```
+<pre style="background-color:#ffffff;color:#000000;padding:12px;border:1px solid #ccc;">
 ┌───────────────────────────────────────────────────────────────────────────┐
 │                         MASTER / LOOKUP DATA                              │
 │  master_country, master_states, master_cities, master_locality            │
@@ -200,7 +200,7 @@ A fallback value MySQL inserts automatically if you don't supply one.
 │  our_offices, package_listings, purchased_packages, deleted_logs,         │
 │  failed_jobs, migrations                                                  │
 └───────────────────────────────────────────────────────────────────────────┘
-```
+</pre>
 
 ### General data flow
 
