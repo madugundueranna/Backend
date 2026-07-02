@@ -1,4 +1,5 @@
 require("dotenv").config();
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -53,7 +54,9 @@ app.use((err, req, res, next) => {
   const status = err.status || err.statusCode || 500;
   res.status(status).json({ success: false, message: err.message || "Internal Server Error" });
 });
-
+app.get("/DATABASE_DOCUMENTATION.md", (req, res) => {
+  res.sendFile(path.join(__dirname, "DATABASE_DOCUMENTATION.md"));
+});
 // Server Starting
 app.listen(PORT, () => {
   console.log(`Server started at port ${PORT}`);
